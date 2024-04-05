@@ -1,24 +1,34 @@
 package com.maids.maids_library.service;
 
 import com.maids.maids_library.dto.BookRequest;
+import com.maids.maids_library.exceptions.BookNotFoundException;
+import com.maids.maids_library.exceptions.DuplicateISBNException;
 import com.maids.maids_library.model.Book;
 import com.maids.maids_library.repository.BookRepository;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class BookService {
 
+    @NonNull
     BookRepository bookRepository;
 
     public Book addBook(BookRequest book) {
+        // Check if a book exists with the provided ISBN, ISBNs should be unique
         Book existingIsbn = bookRepository.findBookByIsbn(book.isbn);
 
         if (existingIsbn != null) {
             // Book exists throw a validation error
+            throw new DuplicateISBNException("Book with isbn: " + book.isbn + " already exists");
         }
+        // Proceed to save new book
         Book newBook = new Book();
         newBook.setAuthor(book.author);
         newBook.setTitle(book.title);
@@ -33,8 +43,9 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Book fetchBook(long bookId) {
-        return bookRepository.findById(bookId).orElseThrow();
+    @Cacheable(value = "books")
+    public Book fetchBook(long book_id) {
+        return bookRepository.findById(book_id).orElseThrow(() -> new BookNotFoundException("Book with provided id: " + book_id + " not found"));
     }
 
     @Transactional
@@ -47,7 +58,7 @@ public class BookService {
                     existingBook.setPublicationYear(bookRequest.publicationYear);
                     return bookRepository.save(existingBook);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new BookNotFoundException("Book with provided id: " + book_id + " not found"));
     }
 
     public String removeBook(Long book_id) {
@@ -55,6 +66,6 @@ public class BookService {
                 .map(book -> {
                     bookRepository.deleteById(book_id);
                     return "Book deleted successfully";
-                }).orElse("Book does not exist");
+                }).orElseThrow(() -> new BookNotFoundException("Book with provided id: " + book_id + " not found"));
     }
 }

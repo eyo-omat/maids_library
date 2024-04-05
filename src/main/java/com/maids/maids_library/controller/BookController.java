@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(name = "/api/books")
+@RequestMapping(value = "api/books")
 @RequiredArgsConstructor
 public class BookController {
 
@@ -26,7 +26,7 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(allBooks);
     }
 
-    @GetMapping("/{bookId}")
+    @GetMapping(value = "/{bookId}")
     public ResponseEntity<Book> fetchBook(@Valid @PathVariable long bookId) {
         Book book = bookService.fetchBook(bookId);
         return ResponseEntity.status(HttpStatus.OK).body(book);
@@ -38,13 +38,13 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newBook);
     }
 
-    @PutMapping("/{book_id}")
+    @PutMapping(value = "/{book_id}")
     public ResponseEntity<Book> updateBook(@Valid @RequestBody BookRequest bookRequest, @PathVariable Long book_id) {
         Book updatedBook = bookService.updateBook(bookRequest, book_id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedBook);
     }
 
-    @DeleteMapping("/{book_id}")
+    @DeleteMapping(value = "/{book_id}")
     public ResponseEntity<String> removeBook(@Valid @PathVariable Long book_id) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(bookService.removeBook(book_id));
     }
