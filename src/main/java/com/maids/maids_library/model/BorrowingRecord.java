@@ -3,6 +3,7 @@ package com.maids.maids_library.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,8 +22,8 @@ public class BorrowingRecord {
     private Patron patron;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date borrowingDate;
+    private LocalDate borrowingDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date returnDate;
+    private LocalDate returnDate;
 }
