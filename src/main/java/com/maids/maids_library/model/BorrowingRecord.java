@@ -22,8 +22,8 @@ public class BorrowingRecord {
     private Patron patron;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate borrowingDate;
+    private Date borrowingDate;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDate returnDate;
+    private Date returnDate;
 }

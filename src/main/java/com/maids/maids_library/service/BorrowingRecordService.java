@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class BorrowingRecordService {
         BorrowingRecord borrowingRecord = new BorrowingRecord();
         borrowingRecord.setBook(book);
         borrowingRecord.setPatron(patron);
-        borrowingRecord.setBorrowingDate(LocalDate.now());
+        borrowingRecord.setBorrowingDate(new Date());
 
         return borrowingRecordRepository.save(borrowingRecord);
     }
@@ -56,7 +57,7 @@ public class BorrowingRecordService {
         BorrowingRecord borrowingRecord = borrowingRecordRepository.findByBookAndPatronAndReturnDateIsNull(book, patron)
                 .orElseThrow(() -> new BorrowingRecordNotFoundException("No active borrowing record found for bookId: " + bookId + " and patronId: " + patronId));
 
-        borrowingRecord.setReturnDate(LocalDate.now());
+        borrowingRecord.setReturnDate(new Date());
 
         return borrowingRecordRepository.save(borrowingRecord);
     }
